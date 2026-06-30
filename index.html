@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام البطاقة الذكية | designer_basra</title>
+    <style>
+        :root {
+            --app-bg: #eef2f5; 
+            --primary-teal: #0d767d; 
+            --primary-teal-light: #13969e; 
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #8392a5;
+            --input-bg: #f8fafc;
+            --border-light: #edf2f7;
+            --focus-yellow-glow: rgba(250, 204, 21, 0.4); 
+            --focus-yellow-border: #fbbf24;
+            --gold-glow: rgba(212, 175, 55, 0.8);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--app-bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 480px; 
+            border-radius: 35px; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-header {
+            background: linear-gradient(180deg, #0f858c 0%, var(--primary-teal) 100%);
+            padding: 35px 20px 25px 20px;
+            text-align: center;
+            color: white;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(13, 118, 125, 0.2);
+        }
+
+        .logo-container { margin-bottom: 15px; display: flex; justify-content: center; }
+        .app-logo {
+            width: 90px; height: auto; border-radius: 18px;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            animation: gold-pulse 2s infinite alternate;
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        @keyframes gold-pulse {
+            0% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); transform: translateY(0); }
+            100% { box-shadow: 0 0 25px var(--gold-glow); transform: translateY(-3px); }
+        }
+
+        .app-header h1 { margin: 0; font-size: 20px; font-weight: 700; }
+        .app-header p { margin: 6px 0 0 0; font-size: 13px; color: rgba(255, 255, 255, 0.85); }
+
+        .form-content { padding: 30px 25px; }
+
+        .section-title {
+            font-size: 14px; font-weight: 700; color: var(--primary-teal);
+            margin: 20px 0 12px 0; padding-bottom: 5px; border-bottom: 1px dashed var(--border-light);
+        }
+
+        .form-group { margin-bottom: 16px; }
+
+        label {
+            display: block; font-size: 13px; font-weight: 600;
+            margin-bottom: 8px; color: var(--text-main);
+        }
+        label .required { color: #e74c3c; }
+        label .optional { color: var(--text-muted); font-weight: normal; font-size: 11px; }
+
+        input[type="text"], input[type="tel"], input[type="url"], textarea {
+            width: 100%; padding: 14px 16px; background-color: var(--input-bg);
+            border: 1.5px solid var(--border-light); border-radius: 16px; 
+            font-size: 14px; color: var(--text-main); font-family: inherit;
+            box-sizing: border-box; transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none; background-color: #ffffff; border-color: var(--focus-yellow-border);
+            box-shadow: 0 0 15px var(--focus-yellow-glow); transform: translateY(-2px);
+        }
+        input::placeholder, textarea::placeholder { color: #a0aec0; font-size: 12px; }
+        .input-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; display: block; }
+
+        .phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .suggestions-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .chip {
+            background-color: #e0f0f1; color: var(--primary-teal); padding: 8px 14px;
+            border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer;
+            border: 1px solid transparent; transition: all 0.2s ease; user-select: none;
+        }
+        .chip:hover, .chip:active { background-color: var(--primary-teal); color: white; transform: scale(1.05); }
+
+        /* تصميم زر رفع الصورة الجديد */
+        .file-input-wrapper { position: relative; overflow: hidden; display: block; width: 100%; }
+        .file-input-wrapper input[type=file] {
+            position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer; z-index: 2;
+        }
+        .file-btn {
+            background-color: var(--input-bg); border: 1.5px dashed var(--primary-teal-light);
+            color: var(--primary-teal); padding: 15px; text-align: center;
+            border-radius: 16px; font-weight: 600; font-size: 13px;
+            transition: all 0.3s ease; z-index: 1; position: relative;
+        }
+        .file-input-wrapper:hover .file-btn { background-color: #e0f0f1; transform: translateY(-2px); }
+
+        .btn-generate {
+            width: 100%; padding: 18px; background-color: var(--primary-teal); color: white;
+            border: none; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease; margin-top: 20px; box-shadow: 0 6px 15px rgba(13, 118, 125, 0.25);
+        }
+        .btn-generate:hover { background-color: var(--primary-teal-light); transform: translateY(-4px); }
+        .btn-generate:disabled { background-color: var(--text-muted); cursor: not-allowed; transform: none; }
+
+        .result-section { margin-top: 20px; padding-top: 25px; text-align: center; display: none; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-section h3 { font-size: 16px; color: var(--primary-teal); margin-bottom: 20px; }
+        
+        .qr-wrapper {
+            background: white; padding: 15px; border-radius: 24px; border: 1px solid var(--border-light);
+            display: inline-block; box-shadow: 0 8px 25px rgba(0,0,0,0.06); margin-bottom: 20px;
+        }
+        .qr-wrapper img { width: 250px; height: 250px; display: block; border-radius: 8px; }
+
+        .action-btns { display: flex; flex-direction: column; gap: 12px; }
+        .btn-action { padding: 15px; border-radius: 50px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; text-align: center; border: none; }
+        .btn-action.download { background-color: #e0f0f1; color: var(--primary-teal); }
+        .btn-action.download:hover { background-color: #d1e8e9; transform: translateY(-2px); }
+        .btn-action.print { background-color: transparent; color: var(--text-muted); border: 1.5px solid var(--border-light); }
+        .btn-action.print:hover { border-color: var(--text-muted); color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="app-header">
+            <div class="logo-container">
+                <img src="logo.jpg" alt="designer_basra Logo" class="app-logo">
+            </div>
+            <h1>نظام البطاقة الذكية الشامل</h1>
+            <p>تطوير وإعداد | designer_basra</p>
+        </div>
+
+        <div class="form-content">
+            
+            <div class="section-title">تصنيف الحالة والبيانات</div>
+            
+            <div class="form-group">
+                <label for="recordType">نوع الحالة أو التصنيف <span class="optional">(اختياري)</span></label>
+                <input type="text" id="recordType" placeholder="اكتب التصنيف هنا، أو اختر من المقترحات...">
+                <div class="suggestions-container">
+                    <span class="chip" onclick="setTypeSuggestion('مريض سكري')">🩸 مريض سكري</span>
+                    <span class="chip" onclick="setTypeSuggestion('مريض صرع')">🧠 مريض صرع</span>
+                    <span class="chip" onclick="setTypeSuggestion('كبير في السن')">👴 كبير في السن</span>
+                    <span class="chip" onclick="setTypeSuggestion('طفل ضائع')">👦 طفل ضائع</span>
+                    <span class="chip" onclick="setTypeSuggestion('غرض مفقود')">💼 غرض مفقود</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="targetName">الاسم أو وصف الغرض <span class="required">*</span></label>
+                <input type="text" id="targetName" placeholder="مثال: أحمد محمد، أو حقيبة عمل سوداء" required>
+            </div>
+
+            <div class="section-title">تخصيص الباركود</div>
+            <div class="form-group">
+                <label>صورة مصغرة في المنتصف <span class="optional">(اختياري)</span></label>
+                <div class="file-input-wrapper">
+                    <div class="file-btn" id="fileBtnText">🖼️ اضغط لاختيار صورة (أو شعار)</div>
+                    <input type="file" id="logoInput" accept="image/*" onchange="updateFileName(this)">
+                </div>
+                <span class="input-hint">سيتم وضعها في المنتصف بدقة، دون تعطيل قدرة الكاميرا على القراءة.</span>
+            </div>
+
+            <div class="section-title">منظومة الاتصال</div>
+            <div class="form-group">
+                <label for="phone1">رقم الهاتف الأساسي <span class="required">*</span></label>
+                <input type="tel" id="phone1" placeholder="مثال: 07801234567" required>
+            </div>
+
+            <div class="phone-grid">
+                <div class="form-group">
+                    <label for="phone2">رقم بديل 1 <span class="optional">(اختياري)</span></label>
+                    <input type="tel" id="phone2" placeholder="077xxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label for="phone3">رقم بديل 2 <span class="optional">(اختياري)</span></label>
+                    <input type="tel" id="phone3" placeholder="075xxxxxxx">
+                </div>
+            </div>
+
+            <div class="section-title">الموقع الجغرافي</div>
+            <div class="form-group">
+                <label for="homeAddress">اسم المنطقة أو العنوان السكني <span class="optional">(اختياري)</span></label>
+                <input type="text" id="homeAddress" placeholder="مثال: البصرة، العشار، قرب مسجد...">
+            </div>
+
+            <div class="form-group">
+                <label for="mapsUrl">رابط الموقع (Google Maps) <span class="optional">(اختياري)</span></label>
+                <input type="url" id="mapsUrl" placeholder="انسخ الرابط من خرائط جوجل هنا">
+            </div>
+
+            <div class="section-title">الملاحظات والتعليمات الطبية</div>
+            <div class="form-group">
+                <label for="extraInfo">معلومات إضافية <span class="optional">(اختياري)</span></label>
+                <textarea id="extraInfo" rows="3" placeholder="اكتب التفاصيل بحرية، أو اضغط على أحد المقترحات بالأسفل..."></textarea>
+                <div class="suggestions-container">
+                    <span class="chip" onclick="addInfoSuggestion('مريض سكري: يحتاج إلى سكر/عصير فوراً إذا كان فاقداً للوعي.')">🩸 سكري</span>
+                    <span class="chip" onclick="addInfoSuggestion('مريض صرع: يرجى حمايته من السقوط والاتصال بنا.')">🧠 صرع</span>
+                    <span class="chip" onclick="addInfoSuggestion('زهايمر: يرجى طمأنته والاتصال بنا للضرورة.')">👴 زهايمر</span>
+                    <span class="chip" onclick="addInfoSuggestion('يوجد مكافأة مالية لمن يعثر عليه ويتصل بنا.')">💰 مكافأة مالية</span>
+                </div>
+            </div>
+
+            <button class="btn-generate" id="generateBtn" onclick="generateAppQR()">إنشاء الباركود الثابت</button>
+
+            <div class="result-section" id="resultArea">
+                <h3>تم توليد الباركود بنجاح ✔</h3>
+                <div class="qr-wrapper"><img id="qrImage" src="" alt="QR Code"></div>
+                <div class="action-btns">
+                    <button class="btn-action download" onclick="downloadFinalImage()">تحميل الباركود كصورة</button>
+                    <button class="btn-action print" onclick="window.print()">طباعة البطاقة</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function setTypeSuggestion(text) {
+            var input = document.getElementById('recordType'); input.value = text; input.focus(); 
+        }
+
+        function addInfoSuggestion(text) {
+            var textarea = document.getElementById('extraInfo');
+            if(textarea.value.trim() !== "") { textarea.value += " | " + text; } 
+            else { textarea.value = text; }
+            textarea.focus(); 
+        }
+
+        function updateFileName(input) {
+            var btnText = document.getElementById('fileBtnText');
+            if (input.files && input.files.length > 0) {
+                btnText.innerHTML = "✅ تم اختيار الصورة: " + input.files[0].name;
+                btnText.style.borderColor = "var(--primary-teal)";
+                btnText.style.backgroundColor = "#e0f0f1";
+            } else {
+                btnText.innerHTML = "🖼️ اضغط لاختيار صورة (أو شعار)";
+                btnText.style.borderColor = "var(--primary-teal-light)";
+                btnText.style.backgroundColor = "var(--input-bg)";
+            }
+        }
+
+        // تحويل الدالة لتتعامل مع الصور والـ Canvas بشكل متزامن
+        async function generateAppQR() {
+            var type = document.getElementById('recordType').value.trim();
+            var name = document.getElementById('targetName').value.trim();
+            var p1 = document.getElementById('phone1').value.trim();
+            var p2 = document.getElementById('phone2').value.trim();
+            var p3 = document.getElementById('phone3').value.trim();
+            var address = document.getElementById('homeAddress').value.trim();
+            var mapsUrl = document.getElementById('mapsUrl').value.trim();
+            var extraInfo = document.getElementById('extraInfo').value.trim();
+
+            if (!name || !p1) {
+                alert("يرجى إدخال الاسم ورقم الهاتف الأساسي على الأقل.");
+                return;
+            }
+
+            // إظهار حالة التحميل للزر
+            var btn = document.getElementById('generateBtn');
+            var originalText = btn.innerText;
+            btn.innerText = "⏳ جاري التشفير والرسم...";
+            btn.disabled = true;
+
+            var displayName = type ? (type + " - " + name) : name;
+            
+            var vcard = "BEGIN:VCARD\nVERSION:3.0\nFN:" + displayName + "\nN:;" + displayName + ";;;\nTEL;TYPE=CELL,VOICE:" + p1 + "\n";
+            if (p2) vcard += "TEL;TYPE=CELL,VOICE;X-LABEL=رقم بديل 1:" + p2 + "\n";
+            if (p3) vcard += "TEL;TYPE=CELL,VOICE;X-LABEL=رقم بديل 2:" + p3 + "\n";
+            if (address) vcard += "ADR;TYPE=HOME:;;" + address + ";;;;\n";
+            if (mapsUrl) vcard += "URL:" + mapsUrl + "\n";
+
+            var noteContent = "";
+            if (type) noteContent += "⚠️ التصنيف: " + type + "\\n";
+            if (address) noteContent += "📍 العنوان: " + address + "\\n";
+            if (mapsUrl) noteContent += "🗺️ الموقع: " + mapsUrl + "\\n";
+            if (extraInfo) noteContent += "📝 ملاحظات: " + extraInfo;
+            if (noteContent) vcard += "NOTE:" + noteContent + "\n";
+            vcard += "END:VCARD";
+
+            try {
+                var encodedVcard = encodeURIComponent(vcard);
+                // السحر هنا: &ecc=H يرفع مستوى تصحيح الأخطاء لـ 30% ليسمح بوضع شعار بالمنتصف!
+                var qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&data=" + encodedVcard;
+
+                // سحب الباركود كبيانات لضمان عمل التحميل لاحقاً
+                const response = await fetch(qrApiUrl);
+                const blob = await response.blob();
+                const qrBlobUrl = URL.createObjectURL(blob);
+
+                var qrImg = new Image();
+                qrImg.onload = function() {
+                    var logoFile = document.getElementById('logoInput').files[0];
+                    var canvas = document.createElement('canvas');
+                    canvas.width = 400; canvas.height = 400;
+                    var ctx = canvas.getContext('2d');
+
+                    // رسم الباركود أولاً
+                    ctx.drawImage(qrImg, 0, 0, 400, 400);
+
+                    if (logoFile) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            var logoImg = new Image();
+                            logoImg.onload = function() {
+                                // حساب حجم الشعار (الربع تقريباً) لعدم إتلاف الباركود
+                                var logoSize = 100;
+                                var x = (400 - logoSize) / 2;
+                                var y = (400 - logoSize) / 2;
+
+                                // رسم خلفية بيضاء تحت الشعار لضمان وضوحه وعدم تداخله مع المربعات
+                                ctx.fillStyle = "white";
+                                if (ctx.roundRect) {
+                                    ctx.beginPath(); ctx.roundRect(x - 6, y - 6, logoSize + 12, logoSize + 12, 12); ctx.fill();
+                                } else {
+                                    ctx.fillRect(x - 6, y - 6, logoSize + 12, logoSize + 12);
+                                }
+
+                                // رسم الشعار فوق المربع الأبيض
+                                ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+                                showResult(canvas.toDataURL('image/png'), btn, originalText);
+                                URL.revokeObjectURL(qrBlobUrl);
+                            };
+                            logoImg.src = e.target.result;
+                        };
+                        reader.readAsDataURL(logoFile);
+                    } else {
+                        showResult(canvas.toDataURL('image/png'), btn, originalText);
+                        URL.revokeObjectURL(qrBlobUrl);
+                    }
+                };
+                qrImg.src = qrBlobUrl;
+
+            } catch (error) {
+                alert("حدث خطأ! يرجى التأكد من اتصالك بالإنترنت أثناء عملية الإنشاء.");
+                btn.innerText = originalText; btn.disabled = false;
+            }
+        }
+
+        function showResult(dataUrl, btn, btnText) {
+            document.getElementById('qrImage').src = dataUrl;
+            var resultArea = document.getElementById('resultArea');
+            resultArea.style.display = "block";
+            setTimeout(() => { resultArea.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 100);
+            btn.innerText = btnText; btn.disabled = false;
+        }
+
+        function downloadFinalImage() {
+            var qrImgSrc = document.getElementById('qrImage').src;
+            if (!qrImgSrc) return;
+            const downloadLink = document.createElement('a');
+            downloadLink.href = qrImgSrc;
+            downloadLink.download = 'Smart_QR_Code_With_Logo.png';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+
+</body>
+</html>
